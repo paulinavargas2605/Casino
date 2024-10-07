@@ -33,7 +33,6 @@ namespace Casino
         }
         private void btnImportar_Click(object sender, EventArgs e)
         {
-            //Hola, como estas
             //Abrir explorador de archivos
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
@@ -90,6 +89,131 @@ namespace Casino
                 form2.Show(); // Mostrar el formulario de manera no modal
                 */
             }
+        }
+
+        //Método para actualizar registros del archivo csv, a la base de datos
+        public DataTable ActualizarRegistros(DataTable dataTable2, 
+                                            string nuid, DateTime fechaCierre, double num_IdMaquina)
+        {
+            //con num_maquina, fecha, y nuid, datos del archivo
+            //comparar con los de la consulta 
+            //modificar los contadores en la tabla maquina
+
+            //Primero necesito consultar si el registro con esos datos, se encuentra en la base 
+            //de datos
+            int filas = dataTable2.Rows.Count;
+            int columnas = dataTable2.Columns.Count;
+
+            object[,] matriz = new object[filas, columnas];
+
+            string connectionString = ConfigurationManager.ConnectionStrings["MiConexion"].ConnectionString;
+
+            // Crear la conexión
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                try
+                {
+                    // Abre la conexión a la base de datos
+                    connection.Open();
+
+                    // Verifica si la conexión está abierta
+                    if (connection.State == System.Data.ConnectionState.Open)
+                    {
+                        //Llenar matriz
+                        for (int i = 0; i < filas; i++)
+                        {
+                            for (int j = 0; j < columnas; j++)
+                            {
+                                matriz[i, j] = dataTable2.Rows[i][j];
+                            }
+                        }
+
+                        //Recorre la matriz
+                        for (int i = 0; i < filas; i++)
+                        {
+                            for (int j = 0; j < columnas; j++)
+                            {
+                                if (Convert.ToString(matriz[i, j]) == "RD") //Entra a la fila
+                                {
+                                    //En la tabla maquina, buscar fecha y nuid(strcedula)
+                                    // si en la colunma1 = nuid, fechabd = fechaarchivo 
+                                    //si esta en la tabla maquina, entonces buscar en
+                                    // contadorescierre y actualizar los datos
+
+
+                                    if (matriz[i, 14] == "S")
+                                    {
+                                        matriz[i, dataTable2.Columns.Count - 1] = "No existe";
+                                        for (int z = 0; z < columnas; z++)
+                                        {
+                                            if (z == 14) //Si está en la columna 14
+                                            {
+                                                //Consulta de los datos de tbl_maquina
+                                                string query = "SELECT dat_FechaCierre FROM tbl_contadorescierre " +
+                                                    "WHERE dat_FechaCierre = '" + fechaConvertida + "'";
+
+
+                                                // Crear el comando MySqlCommand
+                                                MySqlCommand command = new MySqlCommand(query, connection);
+
+                                                // Ejecutar el comando y obtener el MySqlDataReader
+                                                using (MySqlDataReader reader = command.ExecuteReader())
+                                                {
+                                                    while (reader.Read()) // Si hay resultados
+                                                    {
+                                                        dat_FechaCierre = reader.GetDateTime(0);
+                                                        //MessageBox.Show("Entramos al if");
+                                                        // Convertir las cadenas a DateTime
+                                                        DateTime fechaDG = DateTime.Parse(fechaConvertida);
+                                                        DateTime fechaBD = dat_FechaCierre;
+
+                                                        // Comparar fechas
+                                                        if (fechaDG >= fechaBD)
+                                                        {
+                                                            matriz[i, dataTable2.Columns.Count - 1] = "S";
+                                                        }
+                                                        else
+                                                        {
+                                                            matriz[i, dataTable2.Columns.Count - 1] = "N";
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+
+                        for (int i = 0; i < filas; i++)
+                        {
+                            for (int j = 0; j < columnas; j++)
+                            {
+                                dataTable2.Rows[i][j] = matriz[i, j]; // Actualizar cada celda del DataTable
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        MessageBox.Show("No se pudo abrir la conexión.");
+                    }
+                }
+                catch (MySqlException ex)
+                {
+                    MessageBox.Show($"Error de MySQL: {ex.Message}");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error general: {ex.Message}");
+                }
+            }
+
+            return dataTable2;
+
+
+            //if(nuid = registro de la consulta, fechaCierre = fecha del archivo, )
         }
 
         //Método para saber si la máquina tuvo su cierre en la fecha indicada
