@@ -61,7 +61,7 @@ namespace Casino
                 MaquinaActiva(dataTable2);
 
                 
-
+                //Fecha obtenida del archivo
                 fecha = dataGridView2.Rows[0].Cells[1].Value.ToString();
                 //convertir la fecha
                 fechaConvertida = $"{fecha.Substring(0, 4)}-{fecha.Substring(4, 2)}-{fecha.Substring(6, 2)}";
