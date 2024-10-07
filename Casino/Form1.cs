@@ -33,6 +33,7 @@ namespace Casino
         }
         private void btnImportar_Click(object sender, EventArgs e)
         {
+            //Hola
             //Abrir explorador de archivos
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Filter = "CSV files (*.csv)|*.csv|All files (*.*)|*.*";
