@@ -11,6 +11,7 @@ namespace Casino
 {
     public partial class frmExportarx18 : Form
     {
+        // Variables del form
         string fechaConvertida = "", nit = "", str_NitOperador = "", str_NomRazonSocial = "",
             str_TelRazonSocial = "", str_DirRazonSocial = "", str_Permiso = "", str_NumContrato = "",
             chr_Activo = "", chr_Activo_Maquina= "", fecha = "";
