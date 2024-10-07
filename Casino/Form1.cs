@@ -59,7 +59,6 @@ namespace Casino
 
                 //LLamar al metodo que verifica el estado de las maquinas
                 MaquinaActiva(dataTable2);
-
                 
                 //Fecha obtenida del archivo
                 fecha = dataGridView2.Rows[0].Cells[1].Value.ToString();
