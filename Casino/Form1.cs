@@ -84,6 +84,7 @@ namespace Casino
                     MessageBox.Show("El nit " + nit + " está activo");
                 }
 
+                //Creando segundo formulario, para conectar varias ventanas
                 /*
                 Form2 form2 = new Form2(); // Crear una instancia del segundo formulario
                 form2.Show(); // Mostrar el formulario de manera no modal
